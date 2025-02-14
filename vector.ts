@@ -2,6 +2,10 @@ class Vector {
     x = 0;
     y = 0;
 
+    constructor()
+    constructor(obj: {x: number, y: number})
+    constructor(vector: Vector)
+    constructor(x: number, y: number)
     constructor(x?: number | {x: number, y: number}, y?: number) {
         if (x instanceof Object) {
             this.x = x.x;
@@ -10,6 +14,10 @@ class Vector {
             this.x = x ?? 0;
             this.y = y ?? 0;
         }
+    }
+
+    get asArray(): [number, number] {
+        return [this.x, this.y];
     }
 
     get theta(): number {
@@ -23,26 +31,50 @@ class Vector {
         return ret;
     }
     
-    add(vec: {x: number, y: number}): Vector {
-        this.x += vec.x;
-        this.y += vec.y;
-        return this;
+    add(vec: {x: number, y: number}): Vector
+    add(vec: {x: number, y: number}, noChange: boolean): Vector
+    add(vec: {x: number, y: number}, noChange=false): Vector {
+        if (!noChange) {
+            this.x += vec.x;
+            this.y += vec.y;
+            return this;
+        } else {
+            return new Vector(this.x + vec.x, this.y + vec.y)
+        }
     }
 
-    subtract(vec: {x: number, y: number}): Vector {
-        this.x -= vec.x;
-        this.y -= vec.y;
-        return this;
+    subtract(vec: {x: number, y: number}): Vector
+    subtract(vec: {x: number, y: number}, noChange: boolean): Vector
+    subtract(vec: {x: number, y: number}, noChange=false): Vector {
+        if (!noChange) {
+            this.x -= vec.x;
+            this.y -= vec.y;
+            return this;
+        } else {
+            return new Vector(this.x - vec.x, this.y - vec.y)
+        }
     }
 
-    mult(value: number) {
-        this.x *= value;
-        this.y *= value;
+    mult(value: number, noChange: true): Vector
+    mult(value: number): null
+    mult(value: number, noChange=false): Vector | null {
+        if (noChange) {
+            return new Vector(this.x * value, this.y * value);
+        } else {
+            this.x *= value;
+            this.y *= value;
+        }
     }
 
-    div(value: number) {
-        this.x /= value;
-        this.y /= value;
+    div(value: number, noChange: true): Vector
+    div(value: number): null
+    div(value: number, noChange=false): Vector | null {
+        if (noChange) {
+            return new Vector(this.x / value, this.y / value);
+        } else {
+            this.x /= value;
+            this.y /= value;
+        }
     }
 
     angleDifference(vec: {x: number, y: number}): number {
@@ -57,7 +89,7 @@ class Vector {
         return this;
     }
 
-    addAngle(theta: number): Vector {
+    addAngle(theta: number, noChange=true): Vector {
         const thetaNew = this.theta - theta;
         this.x = Math.cos(thetaNew)// * (thetaNew > Math.PI ? -1 : 1);
         this.y = Math.sin(thetaNew)

@@ -12,6 +12,9 @@ class Vector {
             this.y = y ?? 0;
         }
     }
+    get asArray() {
+        return [this.x, this.y];
+    }
     get theta() {
         if (this.x == 0) {
             if (this.y > 0)
@@ -24,23 +27,43 @@ class Vector {
         ret = (ret + 2 * Math.PI) % (2 * Math.PI);
         return ret;
     }
-    add(vec) {
-        this.x += vec.x;
-        this.y += vec.y;
-        return this;
+    add(vec, noChange = false) {
+        if (!noChange) {
+            this.x += vec.x;
+            this.y += vec.y;
+            return this;
+        }
+        else {
+            return new Vector(this.x + vec.x, this.y + vec.y);
+        }
     }
-    subtract(vec) {
-        this.x -= vec.x;
-        this.y -= vec.y;
-        return this;
+    subtract(vec, noChange = false) {
+        if (!noChange) {
+            this.x -= vec.x;
+            this.y -= vec.y;
+            return this;
+        }
+        else {
+            return new Vector(this.x - vec.x, this.y - vec.y);
+        }
     }
-    mult(value) {
-        this.x *= value;
-        this.y *= value;
+    mult(value, noChange = false) {
+        if (noChange) {
+            return new Vector(this.x * value, this.y * value);
+        }
+        else {
+            this.x *= value;
+            this.y *= value;
+        }
     }
-    div(value) {
-        this.x /= value;
-        this.y /= value;
+    div(value, noChange = false) {
+        if (noChange) {
+            return new Vector(this.x / value, this.y / value);
+        }
+        else {
+            this.x /= value;
+            this.y /= value;
+        }
     }
     angleDifference(vec) {
         return Math.acos((vec.x * this.x + vec.y + this.y) / this.magnitude / Math.sqrt(vec.x ** 2 + vec.y ** 2));
@@ -53,7 +76,7 @@ class Vector {
         this.y /= magnitude;
         return this;
     }
-    addAngle(theta) {
+    addAngle(theta, noChange = true) {
         const thetaNew = this.theta - theta;
         this.x = Math.cos(thetaNew); // * (thetaNew > Math.PI ? -1 : 1);
         this.y = Math.sin(thetaNew);
